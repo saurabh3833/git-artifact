@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download Artifacts
+      - name: download Artifacts
         uses: actions/download-artifact@v7
 
         with:
