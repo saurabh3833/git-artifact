@@ -18,6 +18,8 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      filename: ${{ steps.set-filename.outputs.filename }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -25,19 +27,22 @@ jobs:
         run: npm ci
       - name: Build website
         run: npm run build
+      - name: Set filename output
+        id: set-filename
+        run: echo "filename=v${{ github.run_number }}" >> $GITHUB_OUTPUT
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: website
+          name: ${{ steps.set-filename.outputs.filename }}
           path: dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v7
         with:
-          name: website
+          name: ${{ needs.build.outputs.filename }}
       - name: Deploy
         run: echo "Deploying..."
